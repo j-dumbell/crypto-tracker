@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add transaction</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.date.label }}<br>
+            {{ form.date(size=32) }}<br>
+            {% for error in form.date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.buy_currency.label }}<br>
+            {{ form.buy_currency(size=1) }}<br>
+            {% for error in form.buy_currency.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.buy_amount.label }}<br>
+            {{ form.buy_amount(size=32) }}<br>
+            {% for error in form.buy_amount.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sell_currency.label }}<br>
+            {{ form.sell_currency(size=1) }}<br>
+            {% for error in form.sell_currency.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sell_amount.label }}<br>
+            {{ form.sell_amount(size=32) }}<br>
+            {% for error in form.sell_amount.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, url_for, request
-from app import app
-from app.forms import LoginForm
+from app import app, db
+from app.forms import LoginForm, AddTransactionForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User
+from app.models import User, Transaction
 from werkzeug.urls import url_parse
 
 
@@ -35,3 +35,36 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('dashboard'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+
+@app.route('/transactions', methods=['GET', 'POST'])
+@login_required
+def transactions():
+    form = AddTransactionForm()
+    if form.validate_on_submit():
+        transaction = Transaction(
+            date = form.date.data,
+            buy_currency = form.buy_currency.data,
+            buy_amount = form.buy_amount.data,
+            sell_currency = form.sell_currency.data,
+            sell_amount = form.sell_amount.data,
+        )
+        db.session.add(transaction)
+        db.session.commit()
+        flash('Transaction added successfully')
+    return render_template('transactions.html', title='Transactions', form=form)

@@ -1,4 +1,4 @@
-from app import db, login
+from app import db, login, cache
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -21,12 +21,12 @@ class User(UserMixin, db.Model):
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date)
     buy_currency = db.Column(db.String(3))
-    buy_amt = db.Column(db.Float)
+    buy_amount = db.Column(db.Float)
     sell_currency = db.Column(db.String(3))
-    sell_amt = db.Column(db.Float)
-    trans_ts = db.Column(db.DateTime, index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sell_amount = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     def __repr__(self):
         return f'<Transaction {self.buy_currency}, {self.buy_amt}, {self.sell_currency}, {self.sell_amt}>'
@@ -35,3 +35,16 @@ class Transaction(db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class Currency(db.Model):
+    cd = db.Column(db.String(3), primary_key=True)
+    name = db.Column(db.String(100))
+
+    def __repr__(self):
+        return f'Currency {self.cd}, {self.name}'
+
+
+@cache.cached(timeout=3600, key_prefix='all_currencies')
+def get_all_currencies():
+    return [(currency.cd, currency.cd) for currency in Currency.query.all()]

@@ -1,22 +1,20 @@
 <html>
     <head>
         {% if title %}
-        <title>{{ title }} - microblog</title>
+        <title>{{ title }} - crypto</title>
         {% else %}
-        <title>microblog</title>
+        <title>crypto</title>
         {% endif %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-    <div>
-        Microblog:
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
-        {% else %}
-        <a href="{{ url_for('logout') }}">Logout</a>
+        {% if not current_user.is_anonymous %}
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('transactions') }}">Transactions</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
         {% endif %}
-    </div>
-        <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
@@ -26,6 +24,8 @@
         </ul>
         {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
+        <div class="wrapper ">
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
