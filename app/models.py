@@ -29,7 +29,7 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     def __repr__(self):
-        return f'<Transaction {self.buy_currency}, {self.buy_amt}, {self.sell_currency}, {self.sell_amt}>'
+        return f'<Transaction {self.buy_currency}, {self.buy_amount}, {self.sell_currency}, {self.sell_amount}, {self.user_id}>'
 
 
 @login.user_loader

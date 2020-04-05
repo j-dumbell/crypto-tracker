@@ -67,4 +67,5 @@ def transactions():
         db.session.add(transaction)
         db.session.commit()
         flash('Transaction added successfully')
-    return render_template('transactions.html', title='Transactions', form=form)
+    transactions = Transaction.query.filter_by(user_id=current_user.email)
+    return render_template('transactions.html', title='Transactions', form=form, transactions=transactions)
