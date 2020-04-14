@@ -63,9 +63,10 @@ def transactions():
             buy_amount = form.buy_amount.data,
             sell_currency = form.sell_currency.data,
             sell_amount = form.sell_amount.data,
+            user_id = current_user.id
         )
         db.session.add(transaction)
         db.session.commit()
         flash('Transaction added successfully')
-    transactions = Transaction.query.filter_by(user_id=current_user.email)
+    transactions = Transaction.query.filter_by(user_id=current_user.id)
     return render_template('transactions.html', title='Transactions', form=form, transactions=transactions)

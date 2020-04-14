@@ -45,6 +45,11 @@ class Currency(db.Model):
         return f'Currency {self.cd}, {self.name}'
 
 
-@cache.cached(timeout=3600, key_prefix='all_currencies')
+@cache.cached(timeout=3600, key_prefix='all_currencies_form')
 def get_all_currencies():
     return [(currency.cd, currency.cd) for currency in Currency.query.all()]
+
+
+@cache.cached(timeout=3600, key_prefix='all_currencies')
+def get_all_currencies():
+    return [currency.cd for currency in Currency.query.all()]
