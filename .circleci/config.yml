@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: circleci/python:3.7.4
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            python3 -m venv venv
+            source venv/bin/activate
+            pip3 install -r requirements.txt
+      - save_cache:
+          key: dependencies-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "venv"
+      - run:
+          name: Run tests
+          command: |
+            pytest
+
+
+workflows:
+  version: 2.1
+  build_and_push_image_dev:
+    jobs:
+      - build-and-test
