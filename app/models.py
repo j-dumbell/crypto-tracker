@@ -29,7 +29,19 @@ class Transaction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     def __repr__(self):
-        return f'<Transaction {self.buy_currency}, {self.buy_amount}, {self.sell_currency}, {self.sell_amount}, {self.user_id}>'
+        return f'<Transaction {self.id}, {self.buy_currency}, {self.buy_amount}, {self.sell_currency}, {self.sell_amount}, {self.user_id}>'
+
+    @property
+    def serialize(self):
+       return {
+           'id': self.id,
+           'date': self.date.strftime('%Y-%m-%d'),
+           'buy_currency': self.buy_currency,
+           'buy_amount': self.buy_amount,
+           'sell_currency': self.sell_currency,
+           'sell_amount': self.sell_amount,
+           'user_id': self.user_id
+       }
 
 
 @login.user_loader

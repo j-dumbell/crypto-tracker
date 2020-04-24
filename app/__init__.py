@@ -13,4 +13,4 @@ login = LoginManager(app)
 login.login_view = 'login'
 cache = Cache(app)
 
-from app import routes, models, errors, validators
+from app import models, validators, api
