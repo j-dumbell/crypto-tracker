@@ -1,1 +1,4 @@
 app_venv/
+__pycache__/
+.idea/
+.pytest_cache/

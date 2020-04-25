@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.7-slim
 
 WORKDIR /home/tracker
 
@@ -6,12 +6,15 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY app app
-COPY tracker.py config.py boot.sh ./
-RUN chmod +x boot.sh
+COPY entrypoints entrypoints
+COPY tracker.py config.py ./
 
 ENV FLASK_APP tracker.py
+ENV SECRET_KEY blah
 
-#RUN chown -R microblog:microblog ./
+ENV PGUSER postgres
+ENV PGPASSWORD postgres
+ENV PGDATABASE postgres
 
 EXPOSE 5000
-ENTRYPOINT ["./boot.sh"]
+CMD entrypoints/seed.sh

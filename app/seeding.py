@@ -1,6 +1,7 @@
 from app import db
 from app.models import User, Transaction, Currency
 from datetime import date
+from time import sleep
 
 
 user_list = [
@@ -28,16 +29,23 @@ mapping = {
 
 
 if __name__=='__main__':
-    for user in user_list:
-        user.set_password('james')
+    while True:
+        try:
+            db.create_all()
 
-    for model in mapping.keys():
-        model.query.delete()
-        print(f'Truncating table: {model}')
+            for user in user_list:
+                user.set_password('james')
 
-    for model in mapping.keys():
-        for record in mapping[model]:
-            db.session.add(record)
-            print(f'Adding record to table {model}: {record}')
+            for model in mapping:
+                model.query.delete()
+                print(f'Truncating table: {model}')
 
-    db.session.commit()
+            for model, records in mapping.items():
+                db.session.add_all(records)
+                print(f'Adding records to table {model}')
+            db.session.commit()
+            print('Finished')
+            break
+        except:
+            print(f'DB not ready.  Retrying in 10s.')
+            sleep(10)

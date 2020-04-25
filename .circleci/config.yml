@@ -24,6 +24,10 @@ jobs:
           command: |
             source venv/bin/activate
             pytest
+          environment:
+            PGUSER: x
+            PGPASSWORD: y
+            PGDATABASE: z
 
 
 workflows:
