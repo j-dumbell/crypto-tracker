@@ -2,6 +2,7 @@ import pytest
 from app.validators import validate_date, validate_currency, validate_query_string
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     'input, expected',
     [
@@ -14,6 +15,7 @@ def test_validate_date(input, expected):
     assert validate_date(input) == expected
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     'input, patch, expected',
     [

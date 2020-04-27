@@ -10,8 +10,8 @@ user_list = [
 ]
 
 transaction_list = [
-    Transaction(date=date(2019,1,12), buy_currency='BTC', buy_amount=1.1, sell_currency='GBP', sell_amount=1000, user_id=1),
-    Transaction(date=date(2019,5,20), buy_currency='ETH', buy_amount=5, sell_currency='GBP', sell_amount=1200, user_id=1)
+    Transaction(id=1, date=date(2019,1,12), buy_currency='BTC', buy_amount=1.1, sell_currency='GBP', sell_amount=1000, user_id=1),
+    Transaction(id=2, date=date(2019,5,20), buy_currency='ETH', buy_amount=5, sell_currency='GBP', sell_amount=1200, user_id=1),
 ]
 
 currency_list = [

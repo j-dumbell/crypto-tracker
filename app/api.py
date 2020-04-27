@@ -7,7 +7,6 @@ from app.validators import validate_query_string, validate_date, validate_curren
 @app.route('/api/v1/transactions', methods=['GET'])
 def get_transactions():
     query_parameters = request.args
-    print(query_parameters)
     validators = {
         'user_id': (None, True),
         'from_date': (validate_date, False),
@@ -26,9 +25,9 @@ def get_transactions():
         sell_currency = query_parameters.get('to_currency', None)
         query = Transaction.query.filter_by(user_id=user_id)
         if from_date!=None:
-            query = query.filter_by(date>=from_date)
+            query = query.filter(Transaction.date>=from_date)
         if to_date!=None:
-            query = query.filter_by(date<=to_date)
+            query = query.filter(Transaction.date<=to_date)
         if buy_currency!=None:
             query = query.filter_by(buy_currency=buy_currency)
         if sell_currency!=None:

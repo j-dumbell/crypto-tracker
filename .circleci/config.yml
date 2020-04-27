@@ -20,10 +20,10 @@ jobs:
           paths:
             - "venv"
       - run:
-          name: Run tests
+          name: Run unit tests
           command: |
             source venv/bin/activate
-            pytest
+            pytest -v -m unit
           environment:
             PGUSER: x
             PGPASSWORD: y
