@@ -2,37 +2,26 @@ version: 2.1
 
 jobs:
   build-and-test:
-    docker:
-      - image: circleci/python:3.7.4
+    machine:
+      image: ubuntu-1604:201903-01
     working_directory: ~/repo
     steps:
       - checkout
-      - restore_cache:
-          key: dependencies-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
-          name: Install Dependencies
+          name: Build and run services
           command: |
-            python3 -m venv venv
-            source venv/bin/activate
-            pip3 install -r requirements.txt
-      - save_cache:
-          key: dependencies-{{ .Branch }}-{{ checksum "requirements.txt" }}
-          paths:
-            - "venv"
+            docker-compose up -d --build web db
       - run:
-          name: Run unit tests
+          name: Run tests
           command: |
-            source venv/bin/activate
-            pytest -v -m unit
-          environment:
-            PGUSER: x
-            PGPASSWORD: y
-            PGDATABASE: z
-            PGHOST: localhost
+            docker-compose up --build --exit-code-from test test
 
 
 workflows:
   version: 2.1
   build_and_push_image_dev:
     jobs:
-      - build-and-test
+      - build-and-test:
+        branches:
+          ignore:
+            - master
