@@ -28,6 +28,7 @@ jobs:
             PGUSER: x
             PGPASSWORD: y
             PGDATABASE: z
+            PGHOST: localhost
 
 
 workflows:

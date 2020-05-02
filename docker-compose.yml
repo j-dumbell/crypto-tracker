@@ -11,8 +11,17 @@ services:
       POSTGRES_DB: 'postgres'
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfiles/app.Dockerfile
     ports:
       - 5000:5000
     links:
       - db
+
+  test:
+    build:
+      context: .
+      dockerfile: dockerfiles/test.Dockerfile
+    links:
+      - web

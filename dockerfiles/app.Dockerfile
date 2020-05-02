@@ -15,6 +15,7 @@ ENV SECRET_KEY blah
 ENV PGUSER postgres
 ENV PGPASSWORD postgres
 ENV PGDATABASE postgres
+ENV PGHOST db
 
 EXPOSE 5000
-CMD entrypoints/seed.sh
+CMD entrypoints/app.sh
