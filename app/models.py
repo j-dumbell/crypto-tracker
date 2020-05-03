@@ -50,7 +50,7 @@ class Currency(db.Model):
     def __repr__(self):
         return f'Currency {self.cd}, {self.name}'
 
-
-@cache.cached(timeout=3600, key_prefix='all_currencies')
-def get_all_currencies():
-    return [currency.cd for currency in Currency.query.all()]
+    @staticmethod
+    @cache.cached(timeout=3600, key_prefix='all_currencies')
+    def list_codes():
+        return [currency.cd for currency in Currency.query.all()]

@@ -1,6 +1,6 @@
 from flask import request, jsonify, make_response
 from app import app, db
-from app.models import Transaction, get_all_currencies
+from app.models import Transaction, Currency
 from marshmallow import Schema, fields, validates, validates_schema, ValidationError
 from datetime import datetime
 
@@ -14,12 +14,12 @@ class TransactionGetSchema(Schema):
 
     @validates('buy_currency')
     def valid_buy_currency(self, value):
-        if value not in get_all_currencies():
+        if value not in Currency.list_codes():
             raise ValidationError("Invalid currency")
 
     @validates('sell_currency')
     def valid_sell_currency(self, value):
-        if value not in get_all_currencies():
+        if value not in Currency.list_codes():
             raise ValidationError("Invalid currency")
 
     @validates('from_date')
@@ -67,7 +67,7 @@ def get_transactions():
             query = query.filter_by(buy_currency=buy_currency)
         if sell_currency!=None:
             query = query.filter_by(sell_currency=sell_currency)
-        return make_response(jsonify(json_list = [trans.serialize for trans in query.all()]), 200)
+        return make_response(jsonify(result = [trans.serialize for trans in query.all()]), 200)
 
 
 @app.route('/api/v1/transactions/<id>', methods=['DELETE'])

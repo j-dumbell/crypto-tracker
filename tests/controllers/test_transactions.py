@@ -1,6 +1,6 @@
 import pytest
 from requests import get, delete
-from app.transactions import TransactionGetSchema
+from app.controllers.transactions import TransactionGetSchema
 from app.models import Transaction
 import os
 
@@ -18,8 +18,7 @@ import os
 def test_get_transactions(seed_records, payload, expected):
     host = os.environ['WEBHOST']
     resp = get(f'http://{host}:5000/api/v1/transactions', params=payload).json()
-    print(resp)
-    assert expected==[record['id'] for record in resp['json_list']]
+    assert expected==[record['id'] for record in resp['result']]
 
 
 @pytest.mark.unit
@@ -34,7 +33,7 @@ def test_get_transactions(seed_records, payload, expected):
     ]
 )
 def test_TransactionGetSchema(mocker, params, expected):
-    mocker.patch('app.transactions.get_all_currencies', return_value=['GBP', 'USD'])
+    mocker.patch('app.models.Currency.list_codes', return_value=['GBP', 'USD'])
     validator = TransactionGetSchema()
     assert validator.validate(params)==expected
 

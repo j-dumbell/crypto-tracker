@@ -12,4 +12,5 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 cache = Cache(app)
 
-from app import models, transactions
+from app import models
+from app.controllers import transactions, currencies
