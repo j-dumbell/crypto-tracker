@@ -13,10 +13,4 @@ COPY tests tests
 ENV FLASK_APP tracker.py
 ENV SECRET_KEY blah
 
-ENV PGUSER postgres
-ENV PGPASSWORD postgres
-ENV PGDATABASE postgres
-ENV PGHOST db
-ENV WEB_HOST web
-
 CMD entrypoints/test_suite.sh

@@ -1,14 +1,14 @@
 version: '3'
 services:
   db:
-    image: "postgres:latest"
+    image: postgres:latest
     restart: always
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_USER: 'postgres'
-      POSTGRES_DB: 'postgres'
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
 
   web:
     build:
@@ -18,10 +18,20 @@ services:
       - 5000:5000
     links:
       - db
-
+    environment:
+      - PGPASSWORD=postgres
+      - PGUSER=postgres
+      - PGDATABASE=postgres
+      - PGHOST=db
   test:
     build:
       context: .
       dockerfile: dockerfiles/test.Dockerfile
     links:
       - web
+    environment:
+      - PGPASSWORD=postgres
+      - PGUSER=postgres
+      - PGDATABASE=postgres
+      - PGHOST=db
+      - WEBHOST=web
