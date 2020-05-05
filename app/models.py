@@ -1,5 +1,9 @@
 from app import db, cache
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
+import jwt
+from config import Config
+
 
 
 class User(db.Model):
@@ -16,6 +20,24 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def encode_auth_token(self):
+        payload = {
+            'exp': datetime.utcnow() + timedelta(days=1),
+            'iat': datetime.utcnow(),
+            'sub': self.id
+        }
+        return jwt.encode(payload, Config.SECRET_KEY, algorithm='HS256')
+
+    @staticmethod
+    def decode_auth_token(token):
+        try:
+            payload = jwt.decode(token, Config.SECRET_KEY)
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
 
 
 class Transaction(db.Model):
@@ -54,3 +76,16 @@ class Currency(db.Model):
     @cache.cached(timeout=3600, key_prefix='all_currencies')
     def list_codes():
         return [currency.cd for currency in Currency.query.all()]
+
+
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+        current_user = User.decode_auth_token
+        return f(current_user, *args, **kwargs)
+    return decorator

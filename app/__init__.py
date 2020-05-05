@@ -13,4 +13,4 @@ migrate = Migrate(app, db)
 cache = Cache(app)
 
 from app import models
-from app.controllers import transactions, currencies
+from app.controllers import transactions, currencies, login

@@ -1,7 +1,7 @@
 import pytest
 from requests import get
-from app.models import Currency
 import os
+
 
 @pytest.mark.integration
 def test_get_currencies(seed_records):
