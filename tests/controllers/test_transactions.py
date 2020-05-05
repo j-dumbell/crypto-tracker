@@ -1,8 +1,7 @@
 import pytest
 from requests import get, delete
 from app.controllers.transactions import TransactionGetSchema
-from app.models import Transaction
-import os
+from config import Config
 
 
 @pytest.mark.integration
@@ -16,8 +15,7 @@ import os
     ]
 )
 def test_get_transactions(seed_records, payload, expected):
-    host = os.environ['WEBHOST']
-    resp = get(f'http://{host}:5000/api/v1/transactions', params=payload).json()
+    resp = get(f'http://{Config.WEBHOST}:5000/api/v1/transactions', params=payload).json()
     assert expected==[record['id'] for record in resp['result']]
 
 
@@ -44,6 +42,5 @@ def test_TransactionGetSchema(mocker, params, expected):
     [('3', 204), ('4', 404)],
 )
 def test_delete_transactions(seed_records, id, expected):
-    host = os.environ['WEBHOST']
-    resp = delete(f'http://{host}:5000/api/v1/transactions/{id}')
+    resp = delete(f'http://{Config.WEBHOST}:5000/api/v1/transactions/{id}')
     assert resp.status_code==expected
