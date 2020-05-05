@@ -17,9 +17,9 @@ def test_User_encode():
 @pytest.mark.parametrize(
     'token, dt, expected',
     [
-        (b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjEzMjU0NjI0MDAsImlhdCI6MTMyNTM3NjAwMCwic3ViIjoxfQ._MJtnaJK2tXlK0RuLyOZa97J8BZ7DZwifETGty3RuEM',
+        ('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjEzMjU0NjI0MDAsImlhdCI6MTMyNTM3NjAwMCwic3ViIjoxfQ._MJtnaJK2tXlK0RuLyOZa97J8BZ7DZwifETGty3RuEM',
             '2012-01-01 00:00:00', 1),
-        (b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1Nzc5MjMyMDAsImlhdCI6MTU3NzgzNjgwMCwic3ViIjoxfQ.2wgjIRFbJjVBB1oVgSH5qLX0SHaQC1ngswA6YODTK5Y',
+        ('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjEzMjU0NjI0MDAsImlhdCI6MTMyNTM3NjAwMCwic3ViIjoxfQ._MJtnaJK2tXlK0RuLyOZa97J8BZ7DZwifETGty3RuEM',
             '2020-01-10 00:00:00', 'Signature expired. Please log in again.'),
         ('thisisnotatoken', '2020-01-10 00:00:00', 'Invalid token. Please log in again.')
     ]

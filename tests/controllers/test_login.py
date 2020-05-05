@@ -5,7 +5,7 @@ from config import Config
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    'req_body, resp_body, status_code',
+    'req_body, exp_body, status_code',
     [
         ({'email': 'james@gmail.com'}, {'password': ['Missing data for required field.']}, 400),
         ({'password': 'qwerty'}, {'email': ['Missing data for required field.']}, 400),
@@ -15,9 +15,9 @@ from config import Config
         ({'email': 'james@gmail.com', 'password': 'james'}, None, 200)
     ]
 )
-def test_login(seed_records, req_body, resp_body, status_code):
+def test_login(seed_records, req_body, exp_body, status_code):
     url = f'http://{Config.WEBHOST}:5000/api/v1/login'
     resp = post(url, json=req_body)
     assert resp.status_code == status_code
     if req_body != {'email': 'james@gmail.com', 'password': 'james'}:
-        assert resp.json() == resp_body
+        assert resp.json() == exp_body

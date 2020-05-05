@@ -24,5 +24,4 @@ def login():
     if not user.check_password(password):
         return make_response(jsonify({}), 401)
     token = user.encode_auth_token()
-    dec_token = token.decode('utf-8')
-    return make_response(jsonify(dec_token), 200)
+    return make_response(jsonify(token), 200)

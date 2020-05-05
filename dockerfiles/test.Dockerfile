@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 
 COPY app app
 COPY entrypoints entrypoints
-COPY tracker.py config.py ./
+COPY tracker.py config.py pytest.ini ./
 COPY tests tests
 
 ENV FLASK_APP tracker.py
