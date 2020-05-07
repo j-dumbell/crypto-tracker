@@ -3,7 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import jwt
 from config import Config
-
+from functools import wraps
+from flask import request
 
 
 class User(db.Model):
@@ -88,6 +89,6 @@ def token_required(f):
             token = request.headers['x-access-tokens']
         if not token:
             return jsonify({'message': 'a valid token is missing'})
-        current_user = User.decode_auth_token
+        current_user = User.decode_auth_token(token)
         return f(current_user, *args, **kwargs)
     return decorator
