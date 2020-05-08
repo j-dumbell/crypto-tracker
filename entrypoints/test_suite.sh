@@ -1,1 +1,2 @@
-pytest -v
+pytest -v -m unit && \
+pytest -v -m integration

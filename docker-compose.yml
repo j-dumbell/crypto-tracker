@@ -23,6 +23,7 @@ services:
       - PGUSER=postgres
       - PGDATABASE=postgres
       - PGHOST=db
+      - FLASK_ENV=development
   test:
     build:
       context: .

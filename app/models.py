@@ -5,11 +5,12 @@ import jwt
 from config import Config
 from functools import wraps
 from flask import request
+from flask import make_response, jsonify
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, index=True)
+    email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128))
     transactions = db.relationship('Transaction', backref='user', lazy='dynamic')
 
@@ -44,7 +45,7 @@ class User(db.Model):
 
 
 class Transaction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.Date)
     buy_currency = db.Column(db.String(3))
     buy_amount = db.Column(db.Float)
@@ -88,7 +89,7 @@ def token_required(f):
         if 'x-access-tokens' in request.headers:
             token = request.headers['x-access-tokens']
         if not token:
-            return jsonify({'message': 'a valid token is missing'})
+            return make_response(jsonify({'message': 'a valid token is missing'}), 401)
         current_user = User.decode_auth_token(token)
         return f(current_user, *args, **kwargs)
     return decorator

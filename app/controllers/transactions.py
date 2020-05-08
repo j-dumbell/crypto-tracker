@@ -44,6 +44,37 @@ class TransactionGetSchema(Schema):
                 raise ValidationError("From_date greater than to_date")
 
 
+class TransactionPostSchema(Schema):
+    date = fields.Date(required=True)
+    buy_currency = fields.String(required=True)
+    buy_amount = fields.Float(required=True)
+    sell_currency = fields.String(required=False)
+    sell_amount = fields.Float(required=True)
+
+    @validates('buy_currency')
+    def valid_buy_currency(self, value):
+        if value not in Currency.list_codes():
+            raise ValidationError("Invalid currency")
+
+    @validates('sell_currency')
+    def valid_sell_currency(self, value):
+        if value not in Currency.list_codes():
+            raise ValidationError("Invalid currency")
+
+    @validates('date')
+    def future_date(self, value):
+        now = datetime.now().date()
+        if value > now:
+            raise ValidationError("Date in future")
+
+    @validates_schema
+    def buy_equals_sell(self, data, **kwargs):
+        buy_currency = data.get('buy_currency', None)
+        sell_currency = data.get('sell_currency', None)
+        if buy_currency==sell_currency:
+            raise ValidationError('Buy currency equals sell currency')
+
+
 @app.route('/api/v1/transactions', methods=['GET'])
 @token_required
 def get_transactions(current_user):
@@ -78,3 +109,24 @@ def delete_transaction(current_user, id):
     db.session.delete(trans)
     db.session.commit()
     return make_response(jsonify({}), 204)
+
+
+@app.route('/api/v1/transactions', methods=['POST'])
+@token_required
+def post_transaction(current_user):
+    body = request.json
+    validator = TransactionPostSchema()
+    errors = validator.validate(body)
+    if errors:
+        return make_response(jsonify(errors), 400)
+    transaction = Transaction(
+        date=body['date'],
+        buy_currency=body['buy_currency'],
+        buy_amount=body['buy_amount'],
+        sell_currency=body['sell_currency'],
+        sell_amount=body['sell_amount'],
+        user_id=current_user
+    )
+    db.session.add(transaction)
+    db.session.commit()
+    return make_response(jsonify(result=transaction.serialize), 201)

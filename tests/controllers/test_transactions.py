@@ -1,7 +1,8 @@
 import pytest
-from requests import get, delete
-from app.controllers.transactions import TransactionGetSchema
+from requests import get, delete, post
+
 from config import Config
+from app.controllers.transactions import TransactionGetSchema, TransactionPostSchema
 from app.utils import gen_token
 
 
@@ -44,6 +45,30 @@ def test_TransactionGetSchema(mocker, params, expected):
     assert validator.validate(params)==expected
 
 
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    'params, expected',
+    [
+        (
+            {'date': '2025-04-20', 'buy_currency': 'GBP', 'buy_amount':10.1 ,'sell_currency': 'USD', 'sell_amount':3},
+            {'date': ['Date in future']}
+        ),
+        (
+            {'date': '2015-01-01', 'buy_currency': 'GBP', 'buy_amount':5, 'sell_currency': 'GBP', 'sell_amount':3},
+            {'_schema': ['Buy currency equals sell currency']}
+        ),
+        (
+            {'date': '2015-01-01', 'buy_currency': 'GBP', 'buy_amount':5, 'sell_currency': 'BRCH', 'sell_amount':3},
+            {'sell_currency': ['Invalid currency']}
+        ),
+    ]
+)
+def test_TransactionPostSchema(mocker, params, expected):
+    mocker.patch('app.models.Currency.list_codes', return_value=['GBP', 'USD'])
+    validator = TransactionPostSchema()
+    assert validator.validate(params)==expected
+
+
 @pytest.mark.integration
 @pytest.mark.parametrize(
     'user_id, trans_id, expected',
@@ -56,3 +81,41 @@ def test_delete_transactions(seed_records, user_id, trans_id, expected):
         headers={'x-access-tokens': token}
     )
     assert resp.status_code==expected
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    'user_id, body, exp_code, exp_json',
+    [
+        (
+            1,
+            {'date': '2020-04-20', 'buy_currency': 'GBP', 'buy_amount': 10.1, 'sell_currency': 'BTC',
+             'sell_amount': 3},
+            201,
+            {'result': {'date': '2020-04-20', 'buy_currency': 'GBP', 'buy_amount': 10.1, 'sell_currency': 'BTC',
+                        'sell_amount': 3, 'user_id': 1}}
+        ),
+        (
+            1,
+            {'date': '2020-04-20', 'buy_amount': 10.1, 'sell_currency': 'BTC', 'sell_amount': 3},
+            400,
+            {'buy_currency': ['Missing data for required field.']}
+        )
+    ],
+)
+def test_post_transactions(seed_records, user_id, body, exp_code, exp_json):
+    token = gen_token(user_id)
+    resp = post(
+        url=f'http://{Config.WEBHOST}:5000/api/v1/transactions',
+        json=body,
+        headers={'x-access-tokens': token}
+    )
+    resp_json = resp.json()
+    try:
+        del resp_json['result']['id']
+    except:
+        pass
+
+    assert resp.status_code == exp_code
+    assert resp_json == exp_json
+

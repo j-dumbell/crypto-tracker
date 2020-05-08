@@ -4,12 +4,16 @@ from datetime import date
 from time import sleep
 
 
-def create_tables(max_retries, sleep_time):
+def drop_create_tables(max_retries, sleep_time):
     attempt=1
     while attempt <= max_retries:
         try:
-            print(f'Creating tables: attempt {attempt}')
+            print(f'Dropping & creating tables (attempt {attempt})...')
+            db.session.commit()
+            db.drop_all()
             db.create_all()
+            db.session.commit()
+            print(f'Successfully dropped and created all tables')
             break
         except:
             print(f'Attempt {attempt} failed.  Retrying in {sleep_time}')
@@ -17,19 +21,19 @@ def create_tables(max_retries, sleep_time):
             sleep(sleep_time)
 
 
-def trunc_and_seed():
+def add_records():
 
     user_list = [
-        User(id=1, email='van@gmail.com'),
-        User(id=2, email='james@gmail.com')
+        User(email='van@gmail.com'),
+        User(email='james@gmail.com')
     ]
 
     transaction_list = [
-        Transaction(id=1, date=date(2019, 1, 12), buy_currency='BTC', buy_amount=1.1, sell_currency='GBP',
+        Transaction(date=date(2019, 1, 12), buy_currency='BTC', buy_amount=1.1, sell_currency='GBP',
                     sell_amount=1000, user_id=1),
-        Transaction(id=2, date=date(2019, 5, 20), buy_currency='ETH', buy_amount=5, sell_currency='GBP',
+        Transaction(date=date(2019, 5, 20), buy_currency='ETH', buy_amount=5, sell_currency='GBP',
                     sell_amount=1200, user_id=1),
-        Transaction(id=3, date=date(2019, 5, 20), buy_currency='ETH', buy_amount=5, sell_currency='GBP',
+        Transaction(date=date(2019, 5, 20), buy_currency='ETH', buy_amount=5, sell_currency='GBP',
                     sell_amount=1200, user_id=2)
     ]
 
@@ -41,24 +45,22 @@ def trunc_and_seed():
     ]
 
     mapping = {
-        Transaction: transaction_list,
         User: user_list,
+        Transaction: transaction_list,
         Currency: currency_list
     }
 
     for user in user_list:
         user.set_password('james')
 
-    for model in mapping:
-        model.query.delete()
-        print(f'Truncating table: {model}')
-
+    print('Adding records...')
     for model, records in mapping.items():
-        db.session.add_all(records)
-        print(f'Adding records to table {model}')
-    db.session.commit()
+        for record in records:
+            db.session.add(record)
+            db.session.commit()
+    print('All records added')
 
 
 if __name__=='__main__':
-    create_tables(3, 5)
-    trunc_and_seed()
+    drop_create_tables(3, 5)
+    add_records()

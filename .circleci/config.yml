@@ -8,13 +8,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build and run services
+          name: Build and run services.  Run test suite
           command: |
-            docker-compose up -d --build web db
-      - run:
-          name: Run tests
-          command: |
-            docker-compose up --build --exit-code-from test test
+            docker-compose up --build --exit-code-from test
 
 
 workflows:
