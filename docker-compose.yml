@@ -24,6 +24,8 @@ services:
       - PGDATABASE=postgres
       - PGHOST=db
       - FLASK_ENV=development
+      - FLASK_APP=tracker.py
+      - SECRET_KEY=blah
   test:
     build:
       context: .
@@ -36,3 +38,5 @@ services:
       - PGDATABASE=postgres
       - PGHOST=db
       - WEBHOST=web
+      - FLASK_APP=tracker.py
+      - SECRET_KEY=blah

@@ -1,6 +1,7 @@
 from flask import request, jsonify, make_response
-from app import app, db
+from app import app
 from app.models import Currency
+
 
 @app.route('/api/v1/currencies', methods=['GET'])
 def get_currencies():

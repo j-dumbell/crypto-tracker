@@ -9,8 +9,5 @@ COPY app app
 COPY entrypoints entrypoints
 COPY tracker.py config.py ./
 
-ENV FLASK_APP tracker.py
-ENV SECRET_KEY blah
-
 EXPOSE 5000
 CMD entrypoints/app.sh

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: crypto-api-config
+data: 
+  PGUSER: backend-db-user
+  PGDATABASE: postgres
+  PGPASSWORD: vanjam39
+  PGHOST: 10.12.175.3
+  FLASK_APP: tracker.py
+  SECRET_KEY: blah

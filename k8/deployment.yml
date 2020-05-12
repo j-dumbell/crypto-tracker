@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crypto-api
+  labels:
+    app: crypto-api
+spec:
+  selector:
+    matchLabels:
+      app: crypto-api
+  template:
+    metadata:
+      labels:
+        app: crypto-api
+    spec:
+      containers:
+      - name: crypto-api
+        image: eu.gcr.io/big-quanta-276615/backend1
+        ports:
+        - containerPort: 5000
+        envFrom: 
+        - configMapRef: 
+            name: crypto-api-config
