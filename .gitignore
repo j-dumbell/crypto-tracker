@@ -4,3 +4,4 @@ __pycache__/
 .idea/
 .pytest_cache/
 cloud_sql_proxy
+cloudsql/

@@ -1,5 +1,9 @@
 version: 2.1
 
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.7.1
+  gcp-gke: circleci/gcp-gke@1.0.4
+
 jobs:
   build-and-test:
     machine:
@@ -12,12 +16,47 @@ jobs:
           command: |
             docker-compose up --build --exit-code-from test
 
+  deploy-gke:
+    executor: gcp-gke/default
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - gcp-gke/install
+      - gcp-gke/update-kubeconfig-with-credentials:
+          cluster: crypto-tracker-cluster
+          perform-login: true
+      - run:
+          name: Append image number
+          command: |
+            sed -i 's/{{pipeline_number}}/<< pipeline.number >>/g' k8/deployment.yml
+      - run:
+          name: Apply K8s yml
+          command: |
+            kubectl apply -f k8
+
 
 workflows:
   version: 2.1
   build_and_push_image_dev:
     jobs:
       - build-and-test:
-        branches:
-          ignore:
-            - master
+          filters:
+            branches:
+              ignore:
+                - master
+      - approve-deploy:
+          type: approval
+          filters:
+            branches:
+              only:
+                - master
+      - gcp-gcr/build-and-push-image:
+          dockerfile: dockerfiles/app.Dockerfile
+          image: crypto-api
+          registry-url: eu.gcr.io
+          tag: build<< pipeline.number >>
+          requires:
+            - approve-deploy
+      - deploy-gke:
+          requires:
+            - gcp-gcr/build-and-push-image
