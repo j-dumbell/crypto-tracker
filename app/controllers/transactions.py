@@ -1,71 +1,33 @@
 from flask import request, jsonify, make_response
-from app import app, db
-from app.models import Transaction, Currency, token_required
 from marshmallow import Schema, fields, validates, validates_schema, ValidationError
-from datetime import datetime
+
+from app import app, db
+from app.models import Transaction, token_required
+from app.utils import validate_currency, future_date
 
 
 class TransactionGetSchema(Schema):
-    from_date = fields.Date(required=False)
-    to_date = fields.Date(required=False)
-    buy_currency = fields.String(required=False)
-    sell_currency = fields.String(required=False)
-
-    @validates('buy_currency')
-    def valid_buy_currency(self, value):
-        if value not in Currency.list_codes():
-            raise ValidationError("Invalid currency")
-
-    @validates('sell_currency')
-    def valid_sell_currency(self, value):
-        if value not in Currency.list_codes():
-            raise ValidationError("Invalid currency")
-
-    @validates('from_date')
-    def from_date_future(self, value):
-        now = datetime.now().date()
-        if value > now:
-            raise ValidationError("Date in future")
-
-    @validates('to_date')
-    def to_date_future(self, value):
-        now = datetime.now().date()
-        if value > now:
-            raise ValidationError("Date in future")
+    from_date = fields.Date(required=False, validate=future_date)
+    to_date = fields.Date(required=False, validate=future_date)
+    buy_currency = fields.String(required=False, validate=validate_currency)
+    sell_currency = fields.String(required=False, validate=validate_currency)
 
     @validates_schema
     def from_date_greater_to_date(self, data, **kwargs):
         from_date = data.get('from_date', None)
         to_date = data.get('to_date', None)
         if from_date==None or to_date==None:
-            pass
-        else:
-            if from_date > to_date:
-                raise ValidationError("From_date greater than to_date")
+            return
+        if from_date > to_date:
+            raise ValidationError("From_date greater than to_date")
 
 
 class TransactionPostSchema(Schema):
-    date = fields.Date(required=True)
-    buy_currency = fields.String(required=True)
+    date = fields.Date(required=True, validate=future_date)
+    buy_currency = fields.String(required=True, validate=validate_currency)
     buy_amount = fields.Float(required=True)
-    sell_currency = fields.String(required=False)
+    sell_currency = fields.String(required=False, validate=validate_currency)
     sell_amount = fields.Float(required=True)
-
-    @validates('buy_currency')
-    def valid_buy_currency(self, value):
-        if value not in Currency.list_codes():
-            raise ValidationError("Invalid currency")
-
-    @validates('sell_currency')
-    def valid_sell_currency(self, value):
-        if value not in Currency.list_codes():
-            raise ValidationError("Invalid currency")
-
-    @validates('date')
-    def future_date(self, value):
-        now = datetime.now().date()
-        if value > now:
-            raise ValidationError("Date in future")
 
     @validates_schema
     def buy_equals_sell(self, data, **kwargs):
