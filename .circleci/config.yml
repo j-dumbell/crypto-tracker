@@ -37,13 +37,16 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_push_image_dev:
+  build_and_test:
     jobs:
       - build-and-test:
           filters:
             branches:
               ignore:
                 - master
+
+  deploy:
+    jobs:
       - approve-deploy:
           type: approval
           filters:
