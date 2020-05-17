@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache/
 cloud_sql_proxy
 cloudsql/
+tasks_venv/

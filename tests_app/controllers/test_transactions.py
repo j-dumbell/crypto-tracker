@@ -118,4 +118,3 @@ def test_post_transactions(seed_records, user_id, body, exp_code, exp_json):
 
     assert resp.status_code == exp_code
     assert resp_json == exp_json
-
