@@ -70,7 +70,7 @@ class Transaction(db.Model):
 
 
 class Currency(db.Model):
-    cd = db.Column(db.String(3), primary_key=True)
+    cd = db.Column(db.String(5), primary_key=True)
     name = db.Column(db.String(100))
 
     def __repr__(self):
@@ -80,6 +80,16 @@ class Currency(db.Model):
     @cache.cached(timeout=3600, key_prefix='all_currencies')
     def list_codes():
         return [currency.cd for currency in Currency.query.all()]
+
+
+class Price(db.Model):
+    ts = db.Column(db.DateTime, primary_key=True)
+    buy_currency = db.Column(db.String(10), db.ForeignKey('currency.cd'), primary_key=True)
+    sell_currency = db.Column(db.String(10), db.ForeignKey('currency.cd'), primary_key=True)
+    rate = db.Column(db.Float)
+
+    def __repr__(self):
+        return f"Price {self.ts}, {self.buy_currency}, {self.sell_currency}, {self.rate}"
 
 
 def token_required(f):

@@ -1,4 +1,5 @@
 app_venv/
+tasks_venv/
 */__pycache__/
 __pycache__/
 .idea/
@@ -6,3 +7,4 @@ __pycache__/
 cloud_sql_proxy
 cloudsql/
 tasks_venv/
+creds.json

@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: prices-job
+spec:
+  schedule: "5 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: crypto-price-job
+              image: eu.gcr.io/big-quanta-276615/crypto-price-job:build{{pipeline_number}}
+              envFrom:
+              - configMapRef:
+                  name: crypto-api-config
+          restartPolicy: Never

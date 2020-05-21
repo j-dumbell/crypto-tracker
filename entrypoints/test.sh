@@ -1,1 +1,1 @@
-pytest -v
+pytest tests_app/

@@ -9,3 +9,4 @@ data:
   PGHOST: 10.12.175.3
   FLASK_APP: tracker.py
   SECRET_KEY: blah
+  BUCKET: crypto-tracker-prices

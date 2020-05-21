@@ -5,16 +5,31 @@ orbs:
   gcp-gke: circleci/gcp-gke@1.0.4
 
 jobs:
-  build-and-test:
+  build-and-test-api:
     machine:
       image: ubuntu-1604:201903-01
     working_directory: ~/repo
     steps:
       - checkout
       - run:
-          name: Build and run services.  Run test suite
+          name: Build and run API & DB.  Run test suite.
           command: |
             docker-compose up --build --exit-code-from test
+
+  build-and-test-price-job:
+    docker:
+      - image: circleci/python:3.7.4-stretch
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            pip3 install -r requirements/prices.txt --user
+      - run:
+          name: Run tests
+          command: |
+            pytest tests_tasks/
 
   deploy-gke:
     executor: gcp-gke/default
@@ -26,9 +41,9 @@ jobs:
           cluster: crypto-tracker-cluster
           perform-login: true
       - run:
-          name: Append image number
+          name: Append image numbers
           command: |
-            sed -i 's/{{pipeline_number}}/<< pipeline.number >>/g' k8/deployment.yml
+            sed -i 's/{{pipeline_number}}/<< pipeline.number >>/g' k8/deployment.yml k8/price_job.yml
       - run:
           name: Apply K8s yml
           command: |
@@ -37,29 +52,36 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_test:
+  build_test_deploy:
     jobs:
-      - build-and-test:
-          filters:
-            branches:
-              ignore:
-                - master
-
-  deploy:
-    jobs:
+      - build-and-test-api
+      - build-and-test-price-job
       - approve-deploy:
           type: approval
+          requires:
+            - build-and-test-api
+            - build-and-test-price-job
           filters:
             branches:
               only:
                 - master
       - gcp-gcr/build-and-push-image:
+          name: push-gcr-api
           dockerfile: dockerfiles/app.Dockerfile
           image: crypto-api
           registry-url: eu.gcr.io
           tag: build<< pipeline.number >>
           requires:
             - approve-deploy
+      - gcp-gcr/build-and-push-image:
+          name: push-gcr-price-job
+          dockerfile: dockerfiles/prices.Dockerfile
+          image: crypto-price-job
+          registry-url: eu.gcr.io
+          tag: build<< pipeline.number >>
+          requires:
+            - approve-deploy
       - deploy-gke:
           requires:
-            - gcp-gcr/build-and-push-image
+            - push-gcr-api
+            - push-gcr-price-job
