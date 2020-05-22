@@ -72,6 +72,7 @@ class Transaction(db.Model):
 class Currency(db.Model):
     cd = db.Column(db.String(5), primary_key=True)
     name = db.Column(db.String(100))
+    asset_type = db.Column(db.String(10))
 
     def __repr__(self):
         return f'Currency {self.cd}, {self.name}'
