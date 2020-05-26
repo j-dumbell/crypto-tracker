@@ -13,7 +13,7 @@ from app.utils import gen_token
         (1, {}, [1, 2]),
         (1, {'buy_currency': 'BTC'}, [1]),
         (1, {'from_date': '2019-04-20'}, [2]),
-        (1, {'sell_currency': 'GBP'}, [1, 2])
+        (1, {'sell_currency': 'USD'}, [1, 2])
     ]
 )
 def test_get_transactions(seed_records, user_id, payload, expected):
@@ -35,12 +35,12 @@ def test_get_transactions(seed_records, user_id, payload, expected):
         ({'from_date': '2025-04-20'}, {'from_date': ['Date in future']}),
         ({'to_date': '2025-04-20'}, {'to_date': ['Date in future']}),
         ({'from_date': '2018-04-20', 'to_date': '2015-01-01'}, {'_schema': ['From_date greater than to_date']}),
-        ({'buy_currency': 'GBP'}, {}),
+        ({'buy_currency': 'USD'}, {}),
         ({'sell_currency': 'USDT'}, {'sell_currency': ['Invalid currency']}),
     ]
 )
 def test_TransactionGetSchema(mocker, params, expected):
-    mocker.patch('app.models.Currency.list_codes', return_value=['GBP', 'USD'])
+    mocker.patch('app.models.Currency.list_codes', return_value=['USD', 'USD'])
     validator = TransactionGetSchema()
     assert validator.validate(params)==expected
 
@@ -50,21 +50,21 @@ def test_TransactionGetSchema(mocker, params, expected):
     'params, expected',
     [
         (
-            {'date': '2025-04-20', 'buy_currency': 'GBP', 'buy_amount':10.1 ,'sell_currency': 'USD', 'sell_amount':3},
+            {'date': '2025-04-20', 'buy_currency': 'USD', 'buy_amount':10.1 ,'sell_currency': 'USD', 'sell_amount':3},
             {'date': ['Date in future']}
         ),
         (
-            {'date': '2015-01-01', 'buy_currency': 'GBP', 'buy_amount':5, 'sell_currency': 'GBP', 'sell_amount':3},
+            {'date': '2015-01-01', 'buy_currency': 'USD', 'buy_amount':5, 'sell_currency': 'USD', 'sell_amount':3},
             {'_schema': ['Buy currency equals sell currency']}
         ),
         (
-            {'date': '2015-01-01', 'buy_currency': 'GBP', 'buy_amount':5, 'sell_currency': 'BRCH', 'sell_amount':3},
+            {'date': '2015-01-01', 'buy_currency': 'USD', 'buy_amount':5, 'sell_currency': 'BRCH', 'sell_amount':3},
             {'sell_currency': ['Invalid currency']}
         ),
     ]
 )
 def test_TransactionPostSchema(mocker, params, expected):
-    mocker.patch('app.models.Currency.list_codes', return_value=['GBP', 'USD'])
+    mocker.patch('app.models.Currency.list_codes', return_value=['USD', 'USD'])
     validator = TransactionPostSchema()
     assert validator.validate(params)==expected
 
@@ -89,10 +89,10 @@ def test_delete_transactions(seed_records, user_id, trans_id, expected):
     [
         (
             1,
-            {'date': '2020-04-20', 'buy_currency': 'GBP', 'buy_amount': 10.1, 'sell_currency': 'BTC',
+            {'date': '2020-04-20', 'buy_currency': 'USD', 'buy_amount': 10.1, 'sell_currency': 'BTC',
              'sell_amount': 3},
             201,
-            {'result': {'date': '2020-04-20', 'buy_currency': 'GBP', 'buy_amount': 10.1, 'sell_currency': 'BTC',
+            {'result': {'date': '2020-04-20', 'buy_currency': 'USD', 'buy_amount': 10.1, 'sell_currency': 'BTC',
                         'sell_amount': 3, 'user_id': 1}}
         ),
         (
