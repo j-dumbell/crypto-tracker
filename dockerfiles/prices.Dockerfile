@@ -7,4 +7,4 @@ RUN pip install -r requirements/prices.txt
 
 COPY tasks tasks
 
-CMD python3 -m tasks.prices
+CMD python3 -m tasks.prices_cli

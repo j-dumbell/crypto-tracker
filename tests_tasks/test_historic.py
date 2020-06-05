@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import pandas as pd
 from pandas.testing import assert_frame_equal
-from datetime import datetime
 import pytest
 
 from tasks.prices import (

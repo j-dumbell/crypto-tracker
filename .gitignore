@@ -1,5 +1,8 @@
 app_venv/
+app_test_venv/
 tasks_venv/
+price_venv/
+prices_test_venv/
 */__pycache__/
 __pycache__/
 .idea/

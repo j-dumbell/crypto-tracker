@@ -1,0 +1,5 @@
+-r app.txt
+requests
+pandas
+google-cloud-storage
+
