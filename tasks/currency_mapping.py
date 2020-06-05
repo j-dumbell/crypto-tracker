@@ -22,5 +22,7 @@ crypto_mapping = {
 }
 
 fiat_mapping = {
-    'United States Dollar': 'USD'
+    'United States Dollar': 'USD',
+    'Euro': 'EUR',
+    'Great British Pound': 'GBP'
 }
