@@ -1,9 +1,9 @@
 # crypto-tracker
 
-To start db and server
+To start (seeded) db and server
 `docker-compose up --build db web`
 
-To manually seed (test suite handles seeding)
+To manually seed (test suite automatically handles seeding)
 `python3 -m app.seeding`
 
 To run test_suite
