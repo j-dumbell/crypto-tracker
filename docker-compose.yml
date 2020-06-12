@@ -26,6 +26,7 @@ services:
       - FLASK_ENV=development
       - FLASK_APP=tracker.py
       - SECRET_KEY=blah
+    command: /bin/bash -c "python3 -m seeds.test; flask run --host 0.0.0.0"
   test:
     build:
       context: .
