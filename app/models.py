@@ -35,13 +35,7 @@ class User(db.Model):
     @staticmethod
     def decode_auth_token(token):
         byte_token = token.encode('utf-8')
-        try:
-            payload = jwt.decode(byte_token, Config.SECRET_KEY)
-            return payload['sub']
-        except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
-        except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
+        return jwt.decode(byte_token, Config.SECRET_KEY)
 
 
 class Transaction(db.Model):
@@ -96,11 +90,17 @@ class Price(db.Model):
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        token = None
-        if 'x-access-tokens' in request.headers:
-            token = request.headers['x-access-tokens']
-        if not token:
-            return make_response(jsonify({'message': 'a valid token is missing'}), 401)
-        current_user = User.decode_auth_token(token)
-        return f(current_user, *args, **kwargs)
+        try:
+            header = request.headers['Authorization']
+            token = header.split('Bearer ')[1]
+        except:
+            return make_response(jsonify({'error': 'No token provided'}), 401)
+        try:
+            decoded = User.decode_auth_token(token)
+            current_user = decoded['sub']
+            return f(current_user, *args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            return make_response(jsonify({'error': 'Token expired'}), 401)
+        except jwt.InvalidTokenError:
+            return make_response(jsonify({'error': 'Invalid token'}), 401)
     return decorator

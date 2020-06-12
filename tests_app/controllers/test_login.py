@@ -10,8 +10,8 @@ from config import Config
         ({'email': 'james@gmail.com'}, {'password': ['Missing data for required field.']}, 400),
         ({'password': 'qwerty'}, {'email': ['Missing data for required field.']}, 400),
         ({}, {'email': ['Missing data for required field.'], 'password': ['Missing data for required field.']}, 400),
-        ({'email': 'notreal@gmail.com', 'password': 'blah'}, {}, 404),
-        ({'email': 'james@gmail.com', 'password': 'wrongpassword'}, {}, 401),
+        ({'email': 'notreal@gmail.com', 'password': 'blah'}, {'error': 'Invalid email address'}, 404),
+        ({'email': 'james@gmail.com', 'password': 'wrongpassword'}, {'error': 'Invalid password'}, 401),
         ({'email': 'james@gmail.com', 'password': 'james'}, None, 200)
     ]
 )

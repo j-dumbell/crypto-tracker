@@ -20,8 +20,8 @@ def login():
     password = body['password']
     user = User.query.filter_by(email=email).first()
     if not user:
-        return make_response(jsonify({}), 404)
+        return make_response(jsonify({'error': 'Invalid email address'}), 404)
     if not user.check_password(password):
-        return make_response(jsonify({}), 401)
+        return make_response(jsonify({'error': 'Invalid password'}), 401)
     token = user.encode_auth_token()
-    return make_response(jsonify(token), 200)
+    return make_response(jsonify({'result': token}), 200)

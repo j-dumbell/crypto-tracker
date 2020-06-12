@@ -21,10 +21,9 @@ def test_get_transactions(seed_records, user_id, payload, expected):
     resp = get(
         url=f'http://{Config.WEBHOST}:5000/api/v1/transactions',
         params=payload,
-        headers={'x-access-tokens': token}
+        headers={'Authorization': f'Bearer {token}'}
     )
     json_resp = resp.json()
-    print(json_resp)
     assert expected==[record['id'] for record in json_resp['result']]
 
 
@@ -78,7 +77,7 @@ def test_delete_transactions(seed_records, user_id, trans_id, expected):
     token = gen_token(user_id)
     resp = delete(
         url=f'http://{Config.WEBHOST}:5000/api/v1/transactions/{trans_id}',
-        headers={'x-access-tokens': token}
+        headers={'Authorization': f'Bearer {token}'}
     )
     assert resp.status_code==expected
 
@@ -108,7 +107,7 @@ def test_post_transactions(seed_records, user_id, body, exp_code, exp_json):
     resp = post(
         url=f'http://{Config.WEBHOST}:5000/api/v1/transactions',
         json=body,
-        headers={'x-access-tokens': token}
+        headers={'Authorization': f'Bearer {token}'}
     )
     resp_json = resp.json()
     try:
