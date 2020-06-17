@@ -21,7 +21,8 @@ def test_User_encode():
 def test_User_decode():
     token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjEzMjU0NjI0MDAsImlhdCI6MTMyNTM3NjAwMCwic3ViIjoxfQ._MJtnaJK2tXlK0RuLyOZa97J8BZ7DZwifETGty3RuEM'
     with freeze_time('2012-01-01 00:00:00'):
-        assert User.decode_auth_token(token) == 1
+        decoded = User.decode_auth_token(token)
+        assert decoded['sub'] == 1
 
 
 @pytest.mark.parametrize(

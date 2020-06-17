@@ -7,7 +7,7 @@
 alembic==1.4.2            # via -r requirements/prices.txt, flask-migrate
 attrs==19.3.0             # via pytest
 cachetools==4.1.0         # via -r requirements/prices.txt, google-auth
-certifi==2020.4.5.1       # via -r requirements/prices.txt, requests
+certifi==2020.4.5.2       # via -r requirements/prices.txt, requests
 chardet==3.0.4            # via -r requirements/prices.txt, requests
 click==7.1.2              # via -r requirements/prices.txt, flask
 flask-caching==1.9.0      # via -r requirements/prices.txt
@@ -47,6 +47,7 @@ python-editor==1.0.4      # via -r requirements/prices.txt, alembic
 pytz==2020.1              # via -r requirements/prices.txt, google-api-core, pandas
 requests==2.23.0          # via -r requirements/prices.txt, google-api-core
 rsa==4.0                  # via -r requirements/prices.txt, google-auth
+simplejson==3.17.0        # via -r requirements/prices.txt
 six==1.15.0               # via -r requirements/prices.txt, flask-cors, google-api-core, google-auth, google-resumable-media, packaging, protobuf, python-dateutil
 sqlalchemy==1.3.17        # via -r requirements/prices.txt, alembic, flask-sqlalchemy
 urllib3==1.25.9           # via -r requirements/prices.txt, requests

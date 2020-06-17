@@ -1,5 +1,4 @@
 -r app.txt
 pytest
 pytest-mock
-requests
 freezegun

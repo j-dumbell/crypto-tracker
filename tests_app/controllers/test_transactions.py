@@ -6,14 +6,13 @@ from app.controllers.transactions import TransactionGetSchema, TransactionPostSc
 from app.utils import gen_token
 
 
-@pytest.mark.integration
 @pytest.mark.parametrize(
     'user_id, payload, expected',
     [
-        (1, {}, [1, 2]),
+        (1, {}, [1, 2, 3]),
         (1, {'buy_currency': 'BTC'}, [1]),
-        (1, {'from_date': '2019-04-20'}, [2]),
-        (1, {'sell_currency': 'USD'}, [1, 2])
+        (1, {'from_date': '2019-04-20'}, [3]),
+        (1, {'sell_currency': 'USD'}, [1, 2, 3])
     ]
 )
 def test_get_transactions(seed_records, user_id, payload, expected):
@@ -27,7 +26,6 @@ def test_get_transactions(seed_records, user_id, payload, expected):
     assert expected==[record['id'] for record in json_resp['result']]
 
 
-@pytest.mark.unit
 @pytest.mark.parametrize(
     'params, expected',
     [
@@ -44,7 +42,6 @@ def test_TransactionGetSchema(mocker, params, expected):
     assert validator.validate(params)==expected
 
 
-@pytest.mark.unit
 @pytest.mark.parametrize(
     'params, expected',
     [
@@ -68,10 +65,9 @@ def test_TransactionPostSchema(mocker, params, expected):
     assert validator.validate(params)==expected
 
 
-@pytest.mark.integration
 @pytest.mark.parametrize(
     'user_id, trans_id, expected',
-    [(2, '3', 204), (2, '4', 404)],
+    [(2, '3', 404), (2, '4', 204)],
 )
 def test_delete_transactions(seed_records, user_id, trans_id, expected):
     token = gen_token(user_id)
@@ -82,7 +78,6 @@ def test_delete_transactions(seed_records, user_id, trans_id, expected):
     assert resp.status_code==expected
 
 
-@pytest.mark.integration
 @pytest.mark.parametrize(
     'user_id, body, exp_code, exp_json',
     [

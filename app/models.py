@@ -1,11 +1,13 @@
-from app import db, cache
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-import jwt
-from config import Config
 from functools import wraps
+
+import jwt
 from flask import request
 from flask import make_response, jsonify
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from config import Config
+from app import db, cache
 
 
 class User(db.Model):
@@ -41,10 +43,10 @@ class User(db.Model):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.Date)
-    buy_currency = db.Column(db.String(3))
-    buy_amount = db.Column(db.Float)
-    sell_currency = db.Column(db.String(3))
-    sell_amount = db.Column(db.Float)
+    buy_currency = db.Column(db.String(5))
+    buy_amount = db.Column(db.DECIMAL(20,5))
+    sell_currency = db.Column(db.String(5))
+    sell_amount = db.Column(db.DECIMAL(20,5))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
 
     def __repr__(self):
