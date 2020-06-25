@@ -43,11 +43,11 @@ jobs:
       - run:
           name: Append image numbers
           command: |
-            sed -i 's/{{pipeline_number}}/<< pipeline.number >>/g' k8/deployment.yml k8/price_job.yml
+            sed -i 's/{{pipeline_number}}/<< pipeline.number >>/g' k8s/deployment.yml k8s/price_job.yml
       - run:
           name: Apply K8s yml
           command: |
-            kubectl apply -f k8
+            kubectl apply -f k8s
 
 
 workflows:
